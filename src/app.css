@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink1: rgb(246, 246, 246);
+    --ink2: rgb(222, 222, 222);
+    --ink3: rgb(200, 200, 200);
+    --ink4: rgb(180, 180, 180);
+    
+    --paper1: rgb(0, 0, 0);
+    --paper2: rgb(10, 10, 10);
+    --paper3: rgb(30, 30, 30);
+    --paper4: rgb(37, 37, 37);
+    --paper5: rgb(43, 43, 43);
+    --paper6: rgb(48, 48, 48);
+    --paper7: rgb(56, 56, 56);
+    --paper8: rgb(66, 66, 66);
+    --paper9: rgb(74, 74, 74);
+    --paper10: rgb(90, 90, 90);
+    
+    --blue: rgb(68, 112, 150);
+    --light-green: rgb(97, 194, 83);
+    --green: rgb(39, 95, 23);
+    --yellow: rgb(245, 191, 79);
+    --orange: rgb(169, 114, 41);
+    --red: rgb(237, 106, 94);
+    --dark-red: rgb(143, 28, 19);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+    }
+  }
+
+  :root[data-theme="dark"] {
+  }
+
+  :root[data-theme="light"] {
+  }
+};
