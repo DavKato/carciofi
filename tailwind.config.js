@@ -23,6 +23,11 @@ export default {
                 4: 'var(--ink4)',
             },
         },
+        extend: {
+            fontSize: {
+                inherit: 'inherit',
+            },
+        },
     },
     plugins: [require('@tailwindcss/forms')],
 };

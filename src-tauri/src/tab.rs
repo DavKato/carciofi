@@ -44,8 +44,17 @@ pub fn restore_from_file(path: PathBuf) -> Vec<Tab> {
     tabs
 }
 
+pub fn get_headers(tabs: &[Tab]) -> Vec<TabHeader> {
+    tabs.iter()
+        .map(|tab| TabHeader {
+            id: tab.id.clone(),
+            title: tab.title.clone(),
+        })
+        .collect()
+}
+
 #[derive(Debug, Serialize, Deserialize)]
-struct Conversation {
+pub struct Conversation {
     template_id: Option<String>,
     question: String,
     answer: String,
@@ -62,10 +71,10 @@ impl Conversation {
 
 #[derive(Debug)]
 pub struct Tab {
-    id: String,
-    title: String,
-    history: LinkedList<Conversation>,
-    cursor_index: usize,
+    pub id: String,
+    pub title: String,
+    pub history: LinkedList<Conversation>,
+    pub cursor_index: usize,
 }
 impl Tab {
     pub fn new() -> Self {
@@ -191,5 +200,19 @@ impl<'de> Deserialize<'de> for Tab {
 
         const FIELDS: &[&str] = &["id", "title", "history", "cursor_index"];
         deserializer.deserialize_struct("Tab", FIELDS, TabVisitor)
+    }
+}
+
+#[derive(Serialize)]
+pub struct TabHeader {
+    id: String,
+    title: String,
+}
+impl TabHeader {
+    pub fn from(tab: &Tab) -> Self {
+        Self {
+            id: tab.id.clone(),
+            title: tab.title.clone(),
+        }
     }
 }

@@ -1,5 +1,5 @@
 <script>
-    let { version } = $props();
+    import { version } from '$app/environment';
 </script>
 
 <footer class="py-2 px-3 flex items-center justify-between">

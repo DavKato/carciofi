@@ -7,13 +7,15 @@
 </script>
 
 <div class="grid dark:bg-stone-900 dark:text-stone-200">
-    <Header path={data.path}></Header>
+    {#key data.state}
+        <Header tabs={data.state.tabs}></Header>
+    {/key}
 
     <main>
         {@render children()}
     </main>
 
-    <Footer version={data.version}></Footer>
+    <Footer></Footer>
 </div>
 
 <style lang="postcss">
