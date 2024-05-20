@@ -2,23 +2,26 @@ use crate::tab;
 use std::sync::Mutex;
 use tauri::State;
 
-pub struct InternalStore {
+#[derive(Debug)]
+pub struct InternalState {
     pub tabs: Mutex<Vec<tab::Tab>>,
 }
-impl InternalStore {
+impl InternalState {
     pub fn new(tabs: Vec<tab::Tab>) -> Self {
         Self {
             tabs: Mutex::new(tabs),
         }
     }
 }
-#[derive(serde::Serialize)]
-pub struct SyncedStore {
+#[derive(Debug, serde::Serialize)]
+pub struct SyncedState {
     pub tabs: Vec<tab::TabHeader>,
 }
-impl SyncedStore {
-    pub fn from(state: State<InternalStore>) -> Self {
-        let tab_headers = tab::get_headers(&state.tabs.lock().unwrap());
-        Self { tabs: tab_headers }
+impl SyncedState {
+    pub fn from(state: &State<InternalState>) -> Self {
+        let tabs = state.tabs.lock().unwrap();
+        Self {
+            tabs: tabs.iter().map(tab::TabHeader::from).collect(),
+        }
     }
 }

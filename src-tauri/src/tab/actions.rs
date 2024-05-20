@@ -1,6 +1,6 @@
-use super::types::{Tab, TabHeader};
-use std::fs;
+use super::types::Tab;
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 fn get_file_path(app: &mut tauri::App) -> PathBuf {
     let dir = app.path_resolver().app_config_dir().unwrap();
@@ -10,12 +10,15 @@ fn get_file_path(app: &mut tauri::App) -> PathBuf {
 pub fn init(app: &mut tauri::App) -> Vec<Tab> {
     let file_path = get_file_path(app);
 
-    if !file_path.exists() {
-        let tabs = init_tabs();
-        create_file(file_path, &tabs);
-        tabs
-    } else {
-        restore_from_file(file_path)
+    match restore_from_file(&file_path) {
+        Ok(tabs) => tabs,
+        Err(e) => {
+            println!("Unable to restore from file: {}", e);
+            println!("Creating new file at: {}", file_path.to_string_lossy());
+            let tabs = init_tabs();
+            create_file(&file_path, &tabs);
+            tabs
+        }
     }
 }
 
@@ -26,7 +29,7 @@ fn init_tabs() -> Vec<Tab> {
     tabs
 }
 
-fn create_file(path: PathBuf, data: &Vec<Tab>) {
+fn create_file(path: &PathBuf, data: &Vec<Tab>) {
     let dir = Path::new(&path).parent().unwrap();
     if !dir.exists() {
         fs::create_dir_all(dir).unwrap();
@@ -35,17 +38,8 @@ fn create_file(path: PathBuf, data: &Vec<Tab>) {
     fs::write(path, data).expect("Unable to write file");
 }
 
-pub fn restore_from_file(path: PathBuf) -> Vec<Tab> {
-    let json = fs::read_to_string(path).expect("Unable to read file");
-    let tabs: Vec<Tab> = serde_json::from_str(&json).expect("Unable to parse JSON");
-    tabs
-}
-
-pub fn get_headers(tabs: &[Tab]) -> Vec<TabHeader> {
-    tabs.iter()
-        .map(|tab| TabHeader {
-            id: tab.id.clone(),
-            title: tab.title.clone(),
-        })
-        .collect()
+fn restore_from_file(path: &PathBuf) -> Result<Vec<Tab>, io::Error> {
+    let json = fs::read_to_string(path)?;
+    let tabs: Vec<Tab> = serde_json::from_str(&json)?;
+    Ok(tabs)
 }

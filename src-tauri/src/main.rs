@@ -5,7 +5,6 @@
 use tauri::Manager;
 
 mod command;
-mod ollama;
 mod store;
 mod tab;
 mod utils;
@@ -26,14 +25,15 @@ fn main() {
                 ))
                 .expect("Unable to set window location");
 
-            app.manage(store::InternalStore::new(tabs));
+            app.manage(store::InternalState::new(tabs));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            command::store::retrieve_store,
+            command::store::retrieve_state,
             command::tab::create_tab,
             command::tab::update_tab_title,
-            command::tab::delete_tab
+            command::tab::delete_tab,
+            command::tab::get_content,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
