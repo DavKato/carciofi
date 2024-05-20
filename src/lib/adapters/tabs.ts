@@ -4,13 +4,20 @@ import { COMMAND } from '$lib/const';
 export type ServerTab = {
     id: string;
     title: string;
+    mode: SessionMode;
 };
 export type Tab = {
     link: string;
     title: ServerTab['title'];
+    mode: SessionMode;
 };
+export type SessionMode = 'OneOff' | 'Chat' | 'File';
 
-export const deseralizeTab = (tab: ServerTab): Tab => ({ link: `/${tab.id}`, title: tab.title });
+export const deseralizeTab = (tab: ServerTab): Tab => ({
+    link: `/${tab.id}`,
+    title: tab.title,
+    mode: tab.mode,
+});
 
 export const createTab = async (): Promise<Tab> => {
     const newTab: ServerTab = await invoke(COMMAND.CREATE_TAB);

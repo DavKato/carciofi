@@ -4,15 +4,24 @@ use std::collections::VecDeque;
 
 const MAX_HISTORY: usize = 20;
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
+pub enum SessionMode {
+    OneOff,
+    Chat,
+    File,
+}
+
+#[derive(Debug, Serialize)]
 pub struct TabHeader {
     pub id: String,
+    pub mode: SessionMode,
     pub title: String,
 }
 impl TabHeader {
     pub fn from(tab: &Tab) -> Self {
         Self {
             id: tab.id.clone(),
+            mode: tab.mode,
             title: tab.title.clone(),
         }
     }
@@ -21,6 +30,7 @@ impl TabHeader {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tab {
     pub id: String,
+    pub mode: SessionMode,
     pub title: String,
     pub history: VecDeque<Content>,
     pub index: u8,
@@ -31,6 +41,7 @@ impl Tab {
         history.push_back(Content::new());
         Self {
             id: utils::get_current_time(),
+            mode: SessionMode::OneOff,
             title: "untitled".to_string(),
             history,
             index: 0,
